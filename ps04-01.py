@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import random
 
 def main():
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
@@ -25,8 +26,8 @@ def main():
         if paragraphs:
             print(f"1. {paragraphs[0].text}\n")
 
-        paragraph_index = 1
-        action = '1'
+        paragraph_index = 1  # Начинаем с второго параграфа для листания
+        action = '1'  # Устанавливаем действие '1' по умолчанию для первого шага
 
         while True:
             action = input("Выберите действие: (1) Листать параграфы, (2) Перейти на связанную страницу, (3) Выйти или нажмите Enter для продолжения с текущим выбором: ")
@@ -37,10 +38,17 @@ def main():
                 else:
                     print("Больше нет параграфов.\n")
             elif action == '2':
-                links = driver.find_elements(By.CSS_SELECTOR, "p a")
+                # Находим все <div> с классом "hatnote navigation-not-searchable"
+                hatnotes = driver.find_elements(By.CSS_SELECTOR, "div.hatnote.navigation-not-searchable")
+                links = []
+                for hatnote in hatnotes:
+                    # Из каждого такого <div> извлекаем все ссылки
+                    links.extend(hatnote.find_elements(By.TAG_NAME, "a"))
+
                 if links:
+                    # Выводим на экран первые 5 (или меньше) ссылок
                     for i, link in enumerate(links[:5]):
-                        print(f"{i + 1}. {link.get_attribute('href')}")
+                        print(f"{i + 1}. {link.get_attribute('text')} {link.get_attribute('href')}")
                     try:
                         link_choice = int(input("Выберите страницу для перехода: ")) - 1
                         links[link_choice].click()
@@ -64,4 +72,5 @@ def main():
     finally:
         driver.quit()
 
-main()
+if __name__ == "__main__":
+    main()
