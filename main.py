@@ -1,24 +1,10 @@
-import requests
-from bs4 import BeautifulSoup
+paragraphs = ["Абзац 1", "Абзац 2", "Абзац 3", "Абзац 4", "Абзац 5", "Абзац 6"]
+for i, paragraph in enumerate(paragraphs[:3]):
+    print(f"{i+1}. {paragraph}")
 
-# URL сайта для парсинга
-url = "https://quotes.toscrape.com/"
 
-# Отправляем HTTP запрос и получаем ответ
-response = requests.get(url)
+print(enumerate(paragraphs[:3]))
 
-# Создаём объект BeautifulSoup для парсинга HTML
-soup = BeautifulSoup(response.text, 'html.parser')
-
-# Используем метод find_all для поиска всех тегов <span> с классом "text" для цитат
-quotes = soup.find_all('span', class_='text')
-
-# Используем метод find_all для поиска всех тегов <small> с классом "author" для авторов
-authors = soup.find_all('small', class_='author')
-
-# Проверяем, найдены ли цитаты и авторы
-if quotes and authors:
-    for quote, author in zip(quotes, authors):
-        print(f"{quote.text} — {author.text}")
-else:
-    print("Цитаты или авторы не найдены")
+colors = ['red', 'green', 'blue', 'yellow']
+for index, color in enumerate(colors, start=1):
+    print(index, color)
