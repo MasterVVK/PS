@@ -1,20 +1,24 @@
 import requests
-import pprint
+from bs4 import BeautifulSoup
 
-# URL для API GitHub
-url = 'https://api.github.com/search/repositories'
+# URL сайта для парсинга
+url = "https://quotes.toscrape.com/"
 
-# Параметры для запроса
-params = {
-    'q': 'language:html'
-}
+# Отправляем HTTP запрос и получаем ответ
+response = requests.get(url)
 
-# Отправка GET-запроса
-response = requests.get(url, params=params)
+# Создаём объект BeautifulSoup для парсинга HTML
+soup = BeautifulSoup(response.text, 'html.parser')
 
-# Печать статус-кода ответа
-print("Статус-код:", response.status_code)
+# Используем метод find_all для поиска всех тегов <span> с классом "text" для цитат
+quotes = soup.find_all('span', class_='text')
 
-# Печать содержимого ответа в JSON формате
-print("total_count в JSON:")
-pprint.pprint(response.json()["total_count"])
+# Используем метод find_all для поиска всех тегов <small> с классом "author" для авторов
+authors = soup.find_all('small', class_='author')
+
+# Проверяем, найдены ли цитаты и авторы
+if quotes and authors:
+    for quote, author in zip(quotes, authors):
+        print(f"{quote.text} — {author.text}")
+else:
+    print("Цитаты или авторы не найдены")
