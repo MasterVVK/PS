@@ -1,10 +1,24 @@
-paragraphs = ["Абзац 1", "Абзац 2", "Абзац 3", "Абзац 4", "Абзац 5", "Абзац 6"]
-for i, paragraph in enumerate(paragraphs[:3]):
-    print(f"{i+1}. {paragraph}")
+def coroutine():
+    print("Начало coroutine")
+    try:
+        while True:
+            value = yield
+            print(f"Получено: {value}")
+    except GeneratorExit:
+        print("Генератор закрыт")
 
+# Создаем генератор
+gen = coroutine()
 
-print(enumerate(paragraphs[:3]))
+# Запускаем генератор
+next(gen)  # Вывод: Начало coroutine
 
-colors = ['red', 'green', 'blue', 'yellow']
-for index, color in enumerate(colors, start=1):
-    print(index, color)
+# Отправляем значение в генератор
+try:
+    gen.send("Привет!")  # Вывод: Получено: Привет!
+    gen.send("Как дела?")  # Вывод: Получено: Как дела?
+except StopIteration:
+    print("Генератор завершил выполнение")
+
+# Закрываем генератор
+gen.close()
